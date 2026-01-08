@@ -17,20 +17,20 @@ To get the project running, follow these steps:
 
 ### 1. Clone this repository
 ```
-git clone "https://github.com/nitzlodean/dsa3101-2510-storm-02.git"
+git clone https://github.com/robinlogic/storm-tracking-dashboard-project-dsa3101.git
 ```
 
 ### 2. Navigate to the project directory
 Replace the path name with the path to the folder where the repository was cloned.
 ```
-cd path/dsa3101-2510-storm-02
+cd path/storm_project
 ```
 
 ### 3. Turn on the cloud instance
 - Open "DSA3101 Stormers" Project on Google Cloud Services
 - Navigate to side bar > Cloud SQL > turn on Instance. **Turn it off immediately after you are done.**
 
-### 4. Build and run the containers from path/dsa3101-2510-storm-02/
+### 4. Build and run the containers from path/storm_project/
 ```
 docker compose up --build
 ```
