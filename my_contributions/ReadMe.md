@@ -40,6 +40,8 @@ This folder contains my contributions to the Dash-based frontend, including:
 
 * Utility scripts for handling frontend data updates from the database
 
+* The SQLAlchemy data-layer abstraction: `stormdatabase.py`
+
 These components integrate seamlessly into the full `storm_project` folder.
 
 ## ⚡ Highlights & Technical Notes
