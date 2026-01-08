@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.logs
+
+# R
+.Rhistory
+
+# Virtual environment
+venv/
+.env/
+
+# Data
+backend_ws/data/
+*.csv
+*.png
+*.jpg
+
+#Allow CSVs in frontend_ws/data
+!frontend_ws/
+!frontend_ws/data/
+!frontend_ws/data/*.csv
+
+# Allow radar image assets in frontend data
+!frontend_ws/data/storm_radar_images_km70/
+!frontend_ws/data/storm_radar_images_km70/*.png
+
+# Credentials
+*.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Mac
+.DS_Store
+**/.DS_Store

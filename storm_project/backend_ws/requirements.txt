@@ -1,0 +1,14 @@
+requests
+mysql-connector-python
+google-cloud-storage
+pandas
+numpy
+opencv-python
+APScheduler
+pytz
+scikit-image
+scipy
+schedule
+filterpy
+scikit-learn
+Flask

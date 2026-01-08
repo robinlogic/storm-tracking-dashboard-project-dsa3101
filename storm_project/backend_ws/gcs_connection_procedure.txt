@@ -1,0 +1,25 @@
+# Connection to GCS
+# replace path of json file with your own path
+
+# For Windows
+
+## In Git Bash, run:
+./cloud-sql-proxy vigilant-cider-474204-j7:asia-southeast1:dsa3101-storm --port 3307 --credentials-file="path\vigilant-cider-474204-j7-98a4813d5eaa.json"
+
+## Then in Command Prompt, run:
+set GOOGLE_APPLICATION_CREDENTIALS=path\vigilant-cider-474204-j7-98a4813d5eaa.json 
+
+# For Mac
+
+## If connecting for the first time, in Terminal, run:
+curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.0/cloud-sql-proxy.darwin.amd64
+chmod +x cloud-sql-proxy
+
+## For subsequent times, run starting from this code.
+## In Terminal, run:
+./cloud-sql-proxy vigilant-cider-474204-j7:asia-southeast1:dsa3101-storm \
+  --credentials-file=path/vigilant-cider-474204-j7-98a4813d5eaa.json \
+  --port 3307
+
+# Open a new Terminal window, run:
+export GOOGLE_APPLICATION_CREDENTIALS=path/vigilant-cider-474204-j7-98a4813d5eaa.json
