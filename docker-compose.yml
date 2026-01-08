@@ -1,38 +1,8 @@
 version: "3.9"
 
 services:
-  cloudsql-proxy:
-    image: gcr.io/cloudsql-docker/gce-proxy:latest
-    command:
-      - /cloud_sql_proxy
-      - -instances=vigilant-cider-474204-j7:asia-southeast1:dsa3101-storm=tcp:0.0.0.0:3306
-      - -credential_file=/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
-    volumes:
-      - ./backend_ws/secrets:/secrets
-    ports:
-      - "3307:3306"
-    restart: unless-stopped
-
-  backend:
-    build:
-      context: .
-      dockerfile: ./backend_ws/Dockerfile
-    ports:
-      - "8080:8000"
-    environment:
-      DB_HOST: cloudsql-proxy
-      DB_PORT: 3306
-      DB_USER: suen
-      DB_PASS: Easy2000!
-      DB_NAME: storm_retrieval
-      GOOGLE_APPLICATION_CREDENTIALS: /app/backend_ws/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
-    depends_on:
-      - cloudsql-proxy
-    volumes:
-      - ./backend_ws/secrets:/app/backend_ws/secrets
-    stdin_open: true
-    tty: true
-
+    
+### Implemented By Me #############################
   frontend:
     build:
       context: ./frontend_ws
@@ -95,6 +65,40 @@ services:
     volumes:
       - ./frontend_ws/db/init:/docker-entrypoint-initdb.d
       - ./frontend_ws/data:/var/lib/mysql-files
+##################################################
 
+##### NOT Implemented by ME ######################
+  cloudsql-proxy:
+    image: gcr.io/cloudsql-docker/gce-proxy:latest
+    command:
+      - /cloud_sql_proxy
+      - -instances=vigilant-cider-474204-j7:asia-southeast1:dsa3101-storm=tcp:0.0.0.0:3306
+      - -credential_file=/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
+    volumes:
+      - ./backend_ws/secrets:/secrets
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend_ws/Dockerfile
+    ports:
+      - "8080:8000"
+    environment:
+      DB_HOST: cloudsql-proxy
+      DB_PORT: 3306
+      DB_USER: default_user
+      DB_PASS: Easy2000!
+      DB_NAME: storm_retrieval
+      GOOGLE_APPLICATION_CREDENTIALS: /app/backend_ws/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
+    depends_on:
+      - cloudsql-proxy
+    volumes:
+      - ./backend_ws/secrets:/app/backend_ws/secrets
+    stdin_open: true
+    tty: true
+###############################################
 volumes:
   mysql_data:
