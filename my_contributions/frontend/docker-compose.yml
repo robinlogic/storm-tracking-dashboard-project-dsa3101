@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+    
+### Implemented By Me #############################
+  frontend:
+    build:
+      context: ./frontend_ws
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+      db_loader:
+        condition: service_completed_successfully
+    volumes:
+      - ./frontend_ws/app:/app/frontend_ws/app
+      - ./frontend_ws/data:/app/frontend_ws/data
+    platform: linux/amd64
+    container_name: frontend_app
+    ports:
+      - "8050:8050"
+
+  mysql:
+    build: 
+      context: ./frontend_ws/docker
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: storm-features-db
+    ports:
+      - "5002:3306"
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./frontend_ws/db/init:/docker-entrypoint-initdb.d
+      - ./frontend_ws/data:/var/lib/mysql-files 
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+
+  db_loader:
+    image: mysql:8.0
+    depends_on:
+      - mysql
+    env_file:
+      - ./.env
+    command: >
+      bash -c "
+      until mysqladmin ping -h 'mysql' --silent; do sleep 2; done;
+      mysql -h mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e \"
+        CREATE USER IF NOT EXISTS 'loader'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
+        GRANT ALL PRIVILEGES ON *.* TO 'loader'@'%';
+        FLUSH PRIVILEGES;
+      \";
+      mysql -h mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" \"$MYSQL_DATABASE\" < /docker-entrypoint-initdb.d/01_schema.sql;
+      mysql -h mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" \"$MYSQL_DATABASE\" < /docker-entrypoint-initdb.d/02_loadcsvs.sql;
+      "
+    volumes:
+      - ./frontend_ws/db/init:/docker-entrypoint-initdb.d
+      - ./frontend_ws/data:/var/lib/mysql-files
+##################################################
+
+##### NOT Implemented by ME ######################
+  cloudsql-proxy:
+    image: gcr.io/cloudsql-docker/gce-proxy:latest
+    command:
+      - /cloud_sql_proxy
+      - -instances=vigilant-cider-474204-j7:asia-southeast1:dsa3101-storm=tcp:0.0.0.0:3306
+      - -credential_file=/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
+    volumes:
+      - ./backend_ws/secrets:/secrets
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend_ws/Dockerfile
+    ports:
+      - "8080:8000"
+    environment:
+      DB_HOST: cloudsql-proxy
+      DB_PORT: 3306
+      DB_USER: default_user
+      DB_PASS: Easy2000!
+      DB_NAME: storm_retrieval
+      GOOGLE_APPLICATION_CREDENTIALS: /app/backend_ws/secrets/vigilant-cider-474204-j7-98a4813d5eaa.json
+    depends_on:
+      - cloudsql-proxy
+    volumes:
+      - ./backend_ws/secrets:/app/backend_ws/secrets
+    stdin_open: true
+    tty: true
+###############################################
+volumes:
+  mysql_data:

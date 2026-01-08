@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'loader'@'%' IDENTIFIED BY 'loader_password';
+GRANT ALL PRIVILEGES ON *.* TO 'loader'@'%';
+FLUSH PRIVILEGES;
