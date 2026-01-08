@@ -77,3 +77,9 @@ docker-compose up --build
 Access the frontend at `http://localhost:8050` (default Dash port)
 
 Note: Full dataset and backend database setup are included in the `storm_project` folder.
+
+## References
+
+Dash AG Grid: [https://dash.plotly.com/datatable]
+
+SQLAlchemy: [https://www.sqlalchemy.org/]
