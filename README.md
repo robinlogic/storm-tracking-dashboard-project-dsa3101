@@ -29,6 +29,8 @@ storm-tracking-dashboard-project-dsa3101/
 │   ├── frontend/           # Components I built
 │   └── README.md           # Explanation of contributions
 │
+├── assets/                 # Miscellaneous files
+│
 └── README.md               # Main overview
 ```
 ## My Contributions
