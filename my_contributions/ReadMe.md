@@ -12,44 +12,105 @@ my_contributions/
 └── README.md           # This file
 ```
 
-## 🗃 SQL Scripts (sql/)
+## 🗃 SQL Scripts — Frontend Database Initialisation
 
-These scripts were used to:
+I implemented a set of SQL scripts to automate the setup and population of the frontend MySQL database. These scripts are executed during container startup as part of the database initialisation process.
 
-* Create tables in the frontend database
+They handle three main responsibilities:
 
-* Populate tables with meteorological data
+* Database access configuration:
+  Creates a dedicated loader user and assigns the required privileges, allowing the db_loader service to initialise and modify the frontend database safely.
 
-* Ensure data is queryable efficiently by the frontend cache
+* Schema definition:
+  Defines the full frontend database schema, including tables, columns, and data types used by the dashboard and visualisation modules.
 
-Key points:
+* Automated data loading:
+  Loads preprocessed meteorological data from CSV files in the frontend data cache into the database, ensuring the frontend always reflects the latest cached dataset.
 
-* Designed for large-scale data (~36,000 rows)
+These scripts are designed to run automatically during startup, ensuring that any changes to the cached data are reflected in the frontend database without manual intervention. All query and business logic is handled separately in storm_database.py.
 
-* Optimised queries for quick frontend response
+## 🐳 Docker Compose & db_loader Service
 
-* Fully compatible with SQLAlchemy abstraction layer in the main project
+I integrated and configured a dedicated db_loader service within Docker Compose to automate frontend database initialisation.
 
-## 🖥 Frontend Components (frontend/)
+The db_loader container performs the following steps at startup:
 
-This folder contains my contributions to the Dash-based frontend, including:
+* Waits for the MySQL service to become available
 
-* Interactive tables with pagination and caching for performance
+* Connects as root to ensure required permissions exist
 
-* Dash layout and components for storm maps, wind vectors, and atmospheric overlays
+* Creates a loader user and grants privileges (as a safeguard)
 
-* Utility scripts for handling frontend data updates from the database
+* Executes the schema and data-loading SQL scripts to initialise the frontend database
 
-* The SQLAlchemy data-layer abstraction: `storm_database.py`
+This ensures the frontend database is always created and populated automatically, without manual setup, and reflects any updates to the cached CSV data.
 
-These components integrate seamlessly into the full `storm_project` folder.
+I also worked on integrating this service into the existing Docker Compose workflow and debugging startup sequencing issues to ensure the database was fully ready before frontend services attempted to query it.
 
-## ⚡ Highlights & Technical Notes
+## 🗄️ storm_database.py — Data Abstraction & Integration Layer
 
-* Implemented caching and pagination to optimise performance on large tables
+I designed and implemented a central StormDatabase class to act as the frontend’s data access and integration layer.
 
-* Ensured frontend code was modular and maintainable
+This component encapsulates all interactions with the MySQL database and backend storm analytics APIs. Frontend services never issue raw SQL or call backend endpoints directly; instead, all data access flows through this class.
 
-* Worked closely with team members to integrate my components into Docker Compose
+Key responsibilities include:
 
-* Debugged service orchestration and database startup issues independently
+* Managing SQLAlchemy connections and parameterised queries
+
+* Providing high-level data retrieval methods (storm profiles, radar imagery, aggregated storm metrics, environmental sensor data)
+
+* Automatically switching between backend-populated tables (`*_be`) and frontend cached tables (`*_fe`) depending on availability
+
+* Normalising schema differences between backend and frontend databases
+
+* Populating frontend database tables by calling backend APIs and inserting cleaned, consistent datasets
+
+This abstraction layer improves separation of concerns, reduces duplicated SQL, and insulates the frontend from backend schema changes. It also centralises query logic, improving maintainability and reducing security risks associated with client-constructed SQL.
+
+This design reflects applied object-oriented principles from my computer science training, particularly encapsulation and separation of responsibilities, in a real data-driven system.
+
+## ⚡ High-Volume Table Performance Optimisation (36,000+ rows)
+
+When the real storm dataset was integrated (~36,000 rows with outlier labels), the data explorer page took up to 2 minutes to load and remained unresponsive. After moving outlier detection to backend precomputation, load time improved to ~40s, but the UI was still unusable. Profiling revealed that Dash AG Grid rendering was the primary bottleneck, not the database.
+
+I implemented a custom client-side pagination system to resolve this issue, as the dashboard targets data scientists exploring large historical datasets. 
+
+What I built
+
+* Designed a manual pagination pipeline on top of Dash AG Grid instead of rendering the full dataset at once
+
+* Cached queried results in browser memory using dcc.Store
+
+* Implemented page controls (next/previous, direct page input, page indicator)
+
+* Dynamically sliced pandas DataFrames per page and re-rendered AG Grid with only visible rows
+
+* Decoupled data retrieval from UI rendering to avoid repeated database queries
+
+Technical highlights
+
+* Stack: Dash, Dash AG Grid, pandas
+
+* Pagination logic handled in callbacks
+
+* In-memory caching to eliminate redundant DB calls
+
+* Preserved filtering and sorting support within paginated views
+
+Impact
+
+* Reduced table load time from ~40s to ~1–2s
+
+* Eliminated browser freezing
+
+* Enabled smooth exploration of high-volume storm datasets
+
+
+## 🧠 Skills Demonstrated
+
+- Data engineering & integration (SQL, schema design, ETL-style loading)
+- Containerised systems (Docker Compose, service orchestration)
+- Backend–frontend abstraction design
+- Performance profiling and optimisation
+- Scalable data visualisation
+- Collaborative development in a multi-service codebase
