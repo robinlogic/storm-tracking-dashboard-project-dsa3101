@@ -57,9 +57,13 @@ Deployment: Integrated and debugged Docker Compose services for full end-to-end 
 
 Visualisation: Created interactive visualisations for meteorological variables
 
-## Screenshots / Demo
+## Screenshots
 
-(Add 1–3 screenshots or GIFs showing the dashboards and tables here)
+![Data Explorer Plots Screenshot](assets/storm_dash_03.jpg)
+
+![Data Explorer Table Screenshot](assets/storm_dash_02.jpg)
+
+![Storm Map Screenshot](assets/storm_dash_01.png)
 
 ## How to Run (Full Project)
 
