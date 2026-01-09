@@ -8,7 +8,7 @@ This was a team-based project. For the full runnable platform, see the `storm_pr
 ```
 my_contributions/
 ├── sql/                # SQL scripts I wrote to populate the frontend database
-├── frontend/           # Dash components and scripts I built
+├── frontend/           # Dash components and Docker scripts I wrote 
 └── README.md           # This file
 ```
 
@@ -31,7 +31,7 @@ These scripts are designed to run automatically during startup, ensuring that an
 
 ## 🐳 Docker Compose & db_loader Service
 
-I integrated and configured a dedicated db_loader service within Docker Compose to automate frontend database initialisation.
+I integrated and configured a dedicated `db_loader` service within Docker Compose (`docker-compose.yml`) to automate frontend database initialisation.
 
 The db_loader container performs the following steps at startup:
 
