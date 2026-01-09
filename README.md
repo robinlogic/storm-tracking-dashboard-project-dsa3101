@@ -84,6 +84,6 @@ Note: Full dataset and backend database setup are included in the `storm_project
 
 ## References
 
-Dash AG Grid: [https://dash.plotly.com/datatable]
+Dash AG Grid: [https://dash.plotly.com/dash-ag-grid]
 
 SQLAlchemy: [https://www.sqlalchemy.org/]
