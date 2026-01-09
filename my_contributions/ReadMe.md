@@ -7,9 +7,13 @@ This was a team-based project. For the full runnable platform, see the `storm_pr
 ## 📂 Folder Structure
 ```
 my_contributions/
-├── sql/                # SQL scripts I wrote to populate the frontend database
-├── frontend/           # Dash components and Docker scripts I wrote 
-└── README.md           # This file
+├── sql/                          # SQL scripts I wrote to populate the frontend database
+├── frontend/                     
+    └── table_performance_opt.py  # Showcases code written for table optimisation
+    └── storm_database.py         # Data layer abstraction
+    └── docker-compose.yml        # Docker compose set-up
+    └── Dockerfile                # Dockerfile written for frontend operation
+└── README.md                     # This file
 ```
 
 ## 🗃 SQL Scripts — Frontend Database Initialisation
