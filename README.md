@@ -19,10 +19,10 @@ Repository Structure
 storm-tracking-dashboard-project-dsa3101/
 │
 ├── storm_project/          # Full runnable team project
-│   ├── app/
-│   ├── src/
+│   ├── frontend_ws/
+│   ├── backend_ws/
 │   ├── docker-compose.yml
-│   └── ...
+│   └── README.md
 │
 ├── my_contributions/       # My personal work for reference
 │   ├── sql/                # SQL scripts I wrote
